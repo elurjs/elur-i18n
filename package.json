@@ -1,6 +1,6 @@
 {
   "name": "@deijose/nix-i18n",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Internationalization library for Nix.js built on signals and stores",
   "license": "MIT",
   "author": "Deiver Vasquez",
@@ -71,7 +71,7 @@
     "generate": "bun run src/cli/generate.ts"
   },
   "peerDependencies": {
-    "@deijose/nix-js": "^2.5.3"
+    "@deijose/nix-js": "^2.5.3 || ^3.0.0"
   },
   "peerDependenciesMeta": {
     "@deijose/nix-js": {
@@ -79,7 +79,7 @@
     }
   },
   "devDependencies": {
-    "@deijose/nix-js": "^2.5.3",
+    "@deijose/nix-js": "3.0.3",
     "happy-dom": "^20.8.3",
     "jsdom": "^29.1.1",
     "terser": "^5.46.0",
