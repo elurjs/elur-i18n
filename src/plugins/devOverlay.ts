@@ -1,17 +1,45 @@
-import type { I18nInstance, Messages } from "../core/types";
+import type { I18nInstance, Messages, TranslateMiddleware } from "../core/types";
 
 export type DevOverlayOptions = {
   log?: boolean;
   overlay?: boolean;
+  /**
+   * If true, uses the middleware pipeline (v1.3). If false, uses the legacy
+   * mutation pattern (backward compatible). @default true
+   */
+  useMiddleware?: boolean;
 };
 
 export function devOverlayPlugin<TMessages extends Messages>(
   i18n: I18nInstance<TMessages>,
   options: DevOverlayOptions = {},
 ): () => void {
-  const { log = true, overlay = false } = options;
-  const originalT = i18n.t;
+  const { log = true, overlay = false, useMiddleware = true } = options;
   const missing = new Set<string>();
+
+  const middleware: TranslateMiddleware = (next) => {
+    return (key, params, tOptions) => {
+      const result = next(key, params, tOptions);
+      if (result === key) {
+        missing.add(key);
+        if (log) {
+          console.warn(`[nix-i18n] Missing key: ${key}`);
+        }
+        if (overlay && typeof document !== "undefined") {
+          renderOverlay(missing);
+        }
+      }
+      return result;
+    };
+  };
+
+  // Middleware-based (v1.3 — Fix #4): uses the composition pipeline.
+  if (useMiddleware && i18n.useTranslateMiddleware) {
+    return i18n.useTranslateMiddleware(middleware);
+  }
+
+  // Legacy mutation pattern (backward compatible).
+  const originalT = i18n.t;
 
   i18n.t = ((key: string, params?: Record<string, unknown>, tOptions?: { context?: string }) => {
     const result = originalT(key as never, params as never, tOptions);

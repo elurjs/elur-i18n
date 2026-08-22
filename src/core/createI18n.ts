@@ -12,6 +12,8 @@ import type {
   I18nInstance,
   I18nOptions,
   Messages,
+  TranslateMiddleware,
+  InterpolationMap,
 } from "./types";
 
 export const I18nInjectionKey = createInjectionKey<I18nInstance>("nix-i18n");
@@ -24,11 +26,41 @@ export function createI18n<TMessages extends Messages = Messages>(
 
   const store = createI18nStore<TMessages>(options, backend);
 
-  const t = createTranslate<TMessages>(store as I18nInstance<TMessages>);
-  const n = createPlural(t);
+  const baseT = createTranslate<TMessages>(store as I18nInstance<TMessages>);
+  const n = createPlural(baseT);
+
+  // ─── Translate middleware pipeline (Fix #4) ────────────────────────────
+  // Instead of plugins mutating i18n.t directly, they register middleware
+  // here. The pipeline is rebuilt on each registration/removal, ensuring
+  // correct LIFO cleanup order.
+  const middlewares: TranslateMiddleware[] = [];
+
+  function rebuildT() {
+    let fn = baseT as (key: string, params?: InterpolationMap, options?: { context?: string }) => string;
+    // Apply middlewares in reverse order so the first registered runs first.
+    for (let i = middlewares.length - 1; i >= 0; i--) {
+      fn = middlewares[i](fn);
+    }
+    i18n.t = fn as I18nInstance<TMessages>["t"];
+    // Rebuild namespace API to use the new t.
+    i18n.useNamespace = (namespace: string) =>
+      createNamespaceApi<TMessages>(i18n.t, n, namespace);
+  }
+
+  function useTranslateMiddleware(middleware: TranslateMiddleware): () => void {
+    middlewares.push(middleware);
+    rebuildT();
+    return () => {
+      const index = middlewares.indexOf(middleware);
+      if (index >= 0) {
+        middlewares.splice(index, 1);
+        rebuildT();
+      }
+    };
+  }
 
   const i18n: I18nInstance<TMessages> = Object.assign(store, {
-    t,
+    t: baseT,
     n,
     fallbackLocale: options.fallbackLocale ?? options.locale,
     nestedFallback: options.nestedFallback ?? false,
@@ -38,7 +70,8 @@ export function createI18n<TMessages extends Messages = Messages>(
     rt: createRelativeTimeFormatter(store),
     list: createListFormatter(store),
     useNamespace: (namespace: string) =>
-      createNamespaceApi<TMessages>(t, n, namespace),
+      createNamespaceApi<TMessages>(baseT, n, namespace),
+    useTranslateMiddleware,
   });
 
   if (options.persist) {
@@ -48,7 +81,9 @@ export function createI18n<TMessages extends Messages = Messages>(
 
   if (options.detect) {
     const detectOptions = typeof options.detect === "object" ? options.detect : {};
-    detectLocalePlugin(i18n, detectOptions);
+    const result = detectLocalePlugin(i18n, detectOptions);
+    // Expose reDetect on the instance (Fix #5).
+    (i18n as I18nInstance<TMessages> & { reDetect?: () => void }).reDetect = result.reDetect;
   }
 
   if (backend && namespaces.length > 0) {

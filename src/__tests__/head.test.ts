@@ -29,10 +29,12 @@ describe("headPlugin", () => {
       ],
     });
 
-    const meta = document.querySelector('meta[name="description"]') as HTMLMetaElement;
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement;
     expect(meta.content).toBe("Description in es");
 
     i18n.setLocale("en");
+    // Re-query because the plugin removes and recreates meta tags (Fix #7).
+    meta = document.querySelector('meta[name="description"]') as HTMLMetaElement;
     expect(meta.content).toBe("Description in en");
   });
 

@@ -34,7 +34,7 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format === "cjs" ? "cjs" : "js"}`,
     },
     rollupOptions: {
-      external: ["@deijose/nix-js"],
+      external: ["@deijose/nix-js", "@babel/parser"],
       output: {
         preserveModules: false,
         globals: {

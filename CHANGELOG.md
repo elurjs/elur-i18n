@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.3.0
+
+### Fixed
+
+- **#1 — `apiBackend` no longer caches failed results.** Fetch errors and HTTP errors (e.g. 500, network) are not cached, allowing automatic retry on subsequent calls. Successful results are cached for single-flight deduplication. Optional `cacheTtl` for time-limited caching.
+- **#2 — `jsonBackend` no longer caches failed results.** Same fix as `apiBackend`: errors are removed from the cache so retries can happen. Optional `cacheTtl` added.
+- **#3 — CLI `nix-i18n-extract` migrated from regex to AST parser (`@babel/parser`).** Now correctly handles template literals (`` t(`key`) ``), skips dynamic keys (`t(variable)`), ignores keys in comments, and supports TypeScript/JSX/TSX syntax. Falls back to regex for Vue/Svelte templates.
+- **#4 — Plugin mutation replaced with composition pipeline.** `devOverlayPlugin` and `icuPluralizePlugin` now use `useTranslateMiddleware()` instead of directly reassigning `i18n.t`. Multiple plugins compose correctly with LIFO cleanup. Legacy mutation pattern available via `{ useMiddleware: false }`.
+- **#5 — `detectLocalePlugin` now returns `reDetect()`.** Call `reDetect()` to re-run locale detection after URL changes or storage clears. Also exposed on the i18n instance as `i18n.reDetect()` when `detect` option is used.
+- **#6 — `stableStringify` replaces `JSON.stringify` in `intlCache`.** Correctly handles `Map` (sorted entries), `Set` (sorted values), `Date` (ISO UTC), and throws on circular references instead of hanging.
+- **#7 — `headPlugin` cleans up orphan meta tags.** Injected meta tags are marked with `data-nix-i18n-head` attribute and removed on locale change and on cleanup. No more stale meta tags from previous locales.
+- **#8 — ICU MessageFormat full support.** `icuPluralize`/`icuFormat` now supports `select` (gender), `selectordinal`, nested messages, `=N` exact match, and `{{` escaped braces. Lightweight built-in parser — no external ICU library required.
+
+### Added
+
+- `useTranslateMiddleware()` on `I18nInstance` for composable translate pipelines.
+- `TranslateMiddleware` type export.
+- `stableStringify` export from `format/intlCache`.
+- `icuFormat()` export for direct ICU message formatting.
+- `cacheTtl` option on `apiBackend` and `jsonBackend`.
+- `reDetect()` on `detectLocalePlugin` return value and i18n instance.
+- `@babel/parser` dependency for AST-based key extraction.
+
 ## 1.2.1
 
 ### Performance

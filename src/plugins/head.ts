@@ -7,6 +7,8 @@ export type HeadOptions = {
   meta?: Array<{ name: string; content?: string | ((locale: string) => string) }>;
 };
 
+const DATA_ATTR = "data-nix-i18n-head";
+
 export function headPlugin<TMessages extends Messages>(
   i18n: I18nInstance<TMessages>,
   options: HeadOptions = {},
@@ -22,6 +24,12 @@ export function headPlugin<TMessages extends Messages>(
     if (dir) {
       document.documentElement.dir = dir === "auto" ? getDir(locale) : dir;
     }
+
+    // Remove all previously injected meta tags (Fix #7).
+    const previous = document.querySelectorAll(`meta[${DATA_ATTR}]`);
+    previous.forEach((el) => el.remove());
+
+    // Inject fresh meta tags for the current locale.
     for (const item of meta) {
       const content = typeof item.content === "function" ? item.content(locale) : item.content;
       setMeta(item.name, content);
@@ -29,15 +37,12 @@ export function headPlugin<TMessages extends Messages>(
   }
 
   function setMeta(name: string, content: string | undefined) {
-    let element = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
-    if (!element) {
-      element = document.createElement("meta");
-      element.name = name;
-      document.head.appendChild(element);
-    }
-    if (content !== undefined) {
-      element.content = content;
-    }
+    if (content === undefined) return;
+    const element = document.createElement("meta");
+    element.name = name;
+    element.content = content;
+    element.setAttribute(DATA_ATTR, "true");
+    document.head.appendChild(element);
   }
 
   update(i18n.locale.value);
@@ -45,6 +50,11 @@ export function headPlugin<TMessages extends Messages>(
 
   return () => {
     unwatch();
+    // Clean up all injected meta tags on dispose.
+    if (typeof document !== "undefined") {
+      const injected = document.querySelectorAll(`meta[${DATA_ATTR}]`);
+      injected.forEach((el) => el.remove());
+    }
   };
 }
 

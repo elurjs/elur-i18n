@@ -1,28 +1,41 @@
 import type { I18nInstance, DetectOptions, Messages } from "../core/types";
 
+export type DetectLocalePluginResult = {
+  /** Re-runs locale detection. Useful after URL changes or storage clears. (v1.3) */
+  reDetect: () => void;
+};
+
 export function detectLocalePlugin<TMessages extends Messages>(
   i18n: I18nInstance<TMessages>,
   options: DetectOptions = {},
-): void {
+): DetectLocalePluginResult {
   const order = options.order ?? ["localStorage", "navigator", "fallback"];
   const storageKey = options.storageKey ?? "nix-i18n-locale";
   const urlParam = options.urlParam ?? "lang";
 
-  for (const source of order) {
-    const detected = detectFrom(source, i18n, storageKey, urlParam, options.pathPrefix);
-    if (detected) {
-      const normalized = normalizeLocale(i18n, detected);
-      if (normalized) {
-        i18n.setLocale(normalized);
-        return;
+  function detect() {
+    for (const source of order) {
+      const detected = detectFrom(source, i18n, storageKey, urlParam, options.pathPrefix);
+      if (detected) {
+        const normalized = normalizeLocale(i18n, detected);
+        if (normalized) {
+          i18n.setLocale(normalized);
+          return;
+        }
       }
+    }
+
+    const base = i18n.locale.value.split("-")[0];
+    if (base && isLocaleSupported(i18n, base)) {
+      i18n.setLocale(base);
     }
   }
 
-  const base = i18n.locale.value.split("-")[0];
-  if (base && isLocaleSupported(i18n, base)) {
-    i18n.setLocale(base);
-  }
+  // Run initial detection.
+  detect();
+
+  // Return reDetect so callers can re-trigger detection (Fix #5).
+  return { reDetect: detect };
 }
 
 function normalizeLocale<TMessages extends Messages>(

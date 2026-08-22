@@ -9,12 +9,14 @@ Internationalization library for [Nix.js](https://nix-js.dev) built on signals a
 - Small bundle size (~4-5 KB typical).
 - Type-safe keys and interpolation parameters.
 - Multiple backends: inline objects, JSON files, API.
-- Lazy-loaded namespaces.
+- Lazy-loaded namespaces with error-safe caching (retries on failure).
 - Pluralization, contexts, and namespaces.
+- Full ICU MessageFormat support: `plural`, `select`, `selectordinal`, nested messages.
 - Date, number, currency, relative time, and list formatting.
-- Optional plugins for persistence, locale detection (URL, path, navigator, storage), router integration, form validation, head tags, cross-tab sync, ICU pluralization, and dev overlay for missing keys.
+- Composable plugin pipeline (no more mutation conflicts).
+- Optional plugins for persistence, locale detection (URL, path, navigator, storage), router integration, form validation, head tags (with orphan cleanup), cross-tab sync, ICU MessageFormat, and dev overlay for missing keys.
 - Optional `provide/inject` support for sub-trees and tenants.
-- CLI to extract and generate translation keys from source files.
+- CLI with AST-based key extraction (Babel parser) for reliable TypeScript/JSX support.
 
 ## Installation
 
@@ -106,11 +108,14 @@ const i18n = createI18n({
   backend: jsonBackend({
     baseUrl: "/locales",
     namespaces: ["common", "auth"],
+    cacheTtl: 60000, // optional: re-fetch after 60s (default: cache forever)
   }),
 });
 ```
 
 Loads `/locales/es/common.json`, `/locales/en/common.json`, etc.
+
+**Error handling (v1.3):** Failed requests (network errors, HTTP 4xx/5xx) are **not cached**. Subsequent calls to `load()` will retry automatically. Successful results are cached for single-flight deduplication.
 
 ### API backend
 
@@ -122,9 +127,12 @@ const i18n = createI18n({
   backend: apiBackend({
     url: "/api/translations",
     headers: { Authorization: "Bearer ..." },
+    cacheTtl: 30000, // optional: re-fetch after 30s
   }),
 });
 ```
+
+**Error handling (v1.3):** Same retry behavior as `jsonBackend` — errors are not cached, allowing automatic retries.
 
 ## Formatters
 
@@ -153,9 +161,19 @@ persistLocalePlugin(i18n, { key: "app-locale" });
 ```ts
 import { detectLocalePlugin } from "@deijose/nix-i18n/plugins/detect";
 
-detectLocalePlugin(i18n, {
+// Returns { reDetect } — call reDetect() to re-run detection after URL/storage changes.
+const { reDetect } = detectLocalePlugin(i18n, {
   order: ["localStorage", "navigator", "fallback"],
 });
+
+// Or use via createI18n options — exposes i18n.reDetect():
+const i18n = createI18n({
+  locale: "en",
+  detect: { order: ["url", "navigator", "fallback"] },
+});
+
+// Later, after URL changes:
+i18n.reDetect?.();
 ```
 
 ### Router integration
@@ -171,12 +189,16 @@ routerLocalePlugin(i18n, router, { mode: "query" });
 ```ts
 import { headPlugin } from "@deijose/nix-i18n/plugins/head";
 
-headPlugin(i18n, {
+const cleanup = headPlugin(i18n, {
   lang: true,
   dir: "auto",
   meta: [{ name: "description", content: (locale) => descriptions[locale] }],
 });
+
+// Call cleanup() to remove all injected meta tags
 ```
+
+**v1.3:** Meta tags injected by the plugin are marked with `data-nix-i18n-head` and automatically removed on locale change (no more orphan tags from previous locales) and on cleanup.
 
 ### Cross-tab sync
 
@@ -197,19 +219,44 @@ const validators = formValidationPlugin(i18n, {
 }, { keyPrefix: "errors" });
 ```
 
-### ICU pluralization
+### ICU MessageFormat
 
 ```ts
 import { icuPluralizePlugin } from "@deijose/nix-i18n/plugins/icuPluralize";
 
 icuPluralizePlugin(i18n);
 
+// Plural
 const messages = {
   en: { items: "{count, plural, one {# item} other {# items}}" },
 };
-
 i18n.t("items", { count: 5 }); // "5 items"
+
+// Select (gender)
+{
+  greeting: "{gender, select, male {Sir} female {Madam} other {Friend}}",
+}
+i18n.t("greeting", { gender: "male" }); // "Sir"
+
+// Selectordinal
+{
+  place: "{count, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}",
+}
+i18n.t("place", { count: 1 }); // "1st"
+
+// Nested
+{
+  items: "{gender, select, male {{count, plural, one {He has # item} other {He has # items}}} other {{count, plural, one {They have # item} other {They have # items}}}}",
+}
+
+// Exact match (=N)
+{
+  items: "{count, plural, =0 {no items} one {# item} other {# items}}",
+}
+i18n.t("items", { count: 0 }); // "no items"
 ```
+
+**v1.3:** Full ICU MessageFormat support via a lightweight built-in parser. Supports `plural`, `select`, `selectordinal`, nested messages, `=N` exact match, and `{{` escaped braces. No external ICU library required.
 
 ### Dev overlay
 
@@ -219,13 +266,38 @@ import { devOverlayPlugin } from "@deijose/nix-i18n/plugins/devOverlay";
 devOverlayPlugin(i18n, { log: true, overlay: true });
 ```
 
+### Translate middleware pipeline (v1.3)
+
+Plugins like `devOverlayPlugin` and `icuPluralizePlugin` now use a composable middleware pipeline instead of mutating `i18n.t` directly. This means multiple plugins compose correctly and cleanup works in any order.
+
+You can also add your own middleware:
+
+```ts
+// Custom middleware — e.g. logging all translations
+const cleanup = i18n.useTranslateMiddleware?.((next) => (key, params, opts) => {
+  console.log(`[i18n] translating: ${key}`);
+  return next(key, params, opts);
+});
+
+// Remove when done
+cleanup();
+```
+
 ## CLI
 
-Extract translation keys from source files:
+Extract translation keys from source files using AST parsing (Babel parser):
 
 ```bash
 npx nix-i18n-extract src --output extracted-keys.json
 ```
+
+**v1.3:** The extractor now uses `@babel/parser` instead of regex, providing reliable extraction in TypeScript/JSX/TSX code. It correctly handles:
+- String literals: `t("key")`, `t('key')`
+- Template literals: `` t(`key`) ``
+- Member expressions: `i18n.t("key")`, `this.t("key")`
+- Skips dynamic keys: `t(variable)` (not statically extractable)
+- Skips comments: `// t("not_a_key")`
+- Falls back to regex for Vue/Svelte templates
 
 Generate a JSON translation file with empty values for multiple locales:
 
