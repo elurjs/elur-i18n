@@ -1,7 +1,7 @@
 import type { I18nInstance, DetectOptions, Messages } from "../core/types";
 
 export type DetectLocalePluginResult = {
-  /** Re-runs locale detection. Useful after URL changes or storage clears. (v1.3) */
+  /** Re-runs locale detection. Useful after URL changes or storage clears. */
   reDetect: () => void;
 };
 
@@ -31,10 +31,8 @@ export function detectLocalePlugin<TMessages extends Messages>(
     }
   }
 
-  // Run initial detection.
   detect();
 
-  // Return reDetect so callers can re-trigger detection (Fix #5).
   return { reDetect: detect };
 }
 

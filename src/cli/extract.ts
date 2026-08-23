@@ -49,7 +49,6 @@ function collectDirectoryFiles(dir: string, files: string[]): void {
     const fullPath = resolve(dir, entry);
     const stat = statSync(fullPath);
     if (stat.isDirectory()) {
-      // Skip node_modules and dist directories.
       if (entry === "node_modules" || entry === "dist" || entry === ".git") continue;
       collectDirectoryFiles(fullPath, files);
     } else if (/\.(ts|tsx|js|jsx|vue|svelte)$/.test(entry)) {
@@ -58,7 +57,6 @@ function collectDirectoryFiles(dir: string, files: string[]): void {
   }
 }
 
-// Function names that are considered translation functions.
 const TRANSLATE_FUNCS = new Set(["t", "n", "i18n.t", "i18n.n", "i18nWithNs.t", "i18nWithNs.n"]);
 
 // Simplified set of callee names to match (the first identifier or the property).
@@ -94,7 +92,6 @@ function extractKeysAst(content: string, filename: string, keys: Set<string>): v
     return;
   }
 
-  // Walk the AST and find CallExpressions where the callee is t() or n().
   walkAst(ast, keys);
 }
 
@@ -103,7 +100,6 @@ function walkAst(node: unknown, keys: Set<string>): void {
 
   const n = node as Record<string, unknown>;
 
-  // Check if this is a CallExpression.
   if (n.type === "CallExpression") {
     const callee = n.callee as Record<string, unknown>;
     const args = n.arguments as unknown[];
@@ -130,7 +126,6 @@ function walkAst(node: unknown, keys: Set<string>): void {
     }
   }
 
-  // Recurse into all child nodes.
   for (const key of Object.keys(n)) {
     const child = n[key];
     if (Array.isArray(child)) {
@@ -172,7 +167,6 @@ function extractLiteralValue(arg: unknown): string | null {
   if (!arg || typeof arg !== "object") return null;
   const node = arg as Record<string, unknown>;
 
-  // String literal: "key" or 'key'
   if (node.type === "StringLiteral") {
     return node.value as string;
   }
@@ -189,7 +183,6 @@ function extractLiteralValue(arg: unknown): string | null {
   return null;
 }
 
-// Fallback regex-based extraction for files that can't be parsed as JS/TS.
 function extractKeysRegex(content: string, keys: Set<string>): void {
   const patterns = [
     /(?:\bt\(|i18n\.t\(|i18nWithNs\.t\()\s*["'`]([^"'`]+)["'`]\s*[,)]/g,
@@ -203,7 +196,6 @@ function extractKeysRegex(content: string, keys: Set<string>): void {
   }
 }
 
-// Exported for testing.
 export function extractKeysForTest(content: string, filename: string, keys: Set<string>): void {
   extractKeysAst(content, filename, keys);
 }

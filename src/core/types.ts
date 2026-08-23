@@ -73,7 +73,6 @@ export type I18nInstance<TMessages extends Messages = Messages> = I18nStore<TMes
    * Registers a translate middleware that wraps the base `t` function.
    * Middleware are composed in registration order and cleaned up in LIFO order.
    * Returns a cleanup function that removes the middleware.
-   * (v1.3)
    */
   useTranslateMiddleware?: (middleware: TranslateMiddleware) => () => void;
 };
@@ -81,7 +80,6 @@ export type I18nInstance<TMessages extends Messages = Messages> = I18nStore<TMes
 /**
  * A translate middleware wraps the base translate function.
  * It receives the next function in the chain and returns a new translate function.
- * (v1.3 — Fix #4)
  */
 export type TranslateMiddleware = (
   next: (key: string, params?: InterpolationMap, options?: { context?: string }) => string,

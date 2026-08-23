@@ -33,7 +33,7 @@ describe("headPlugin", () => {
     expect(meta.content).toBe("Description in es");
 
     i18n.setLocale("en");
-    // Re-query because the plugin removes and recreates meta tags (Fix #7).
+    // Re-query because the plugin removes and recreates meta tags.
     meta = document.querySelector('meta[name="description"]') as HTMLMetaElement;
     expect(meta.content).toBe("Description in en");
   });

@@ -10,10 +10,6 @@ import { stableStringify } from "../format/intlCache";
 import { extractKeysForTest } from "../cli/extract";
 import type { Messages } from "../core/types";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #1 — apiBackend: no cachea errores, permite retry
-// ─────────────────────────────────────────────────────────────────────────────
-
 describe("Fix #1: apiBackend — no cache on error, retry allowed", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -34,11 +30,9 @@ describe("Fix #1: apiBackend — no cache on error, retry allowed", () => {
 
     const backend = apiBackend({ url: "/api/translations" });
 
-    // First call fails.
     const result1 = await backend.load("es", "common");
     expect(result1).toEqual({}); // graceful fallback
 
-    // Second call should retry (not return cached error).
     const result2 = await backend.load("es", "common");
     expect(result2).toEqual({ hello: "Hola" });
     expect(callCount).toBe(2);
@@ -96,20 +90,14 @@ describe("Fix #1: apiBackend — no cache on error, retry allowed", () => {
     await backend.load("es", "common");
     expect(callCount).toBe(1);
 
-    // Within TTL — cached.
     await backend.load("es", "common");
     expect(callCount).toBe(1);
 
-    // After TTL — re-fetch.
     await new Promise((r) => setTimeout(r, 60));
     await backend.load("es", "common");
     expect(callCount).toBe(2);
   });
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #2 — jsonBackend: same fix as apiBackend
-// ─────────────────────────────────────────────────────────────────────────────
 
 describe("Fix #2: jsonBackend — no cache on error, retry allowed", () => {
   beforeEach(() => {
@@ -172,10 +160,6 @@ describe("Fix #2: jsonBackend — no cache on error, retry allowed", () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #3 — CLI AST parser
-// ─────────────────────────────────────────────────────────────────────────────
-
 describe("Fix #3: CLI AST parser", () => {
   it("extracts keys from string literals", () => {
     const keys = new Set<string>();
@@ -230,10 +214,6 @@ describe("Fix #3: CLI AST parser", () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #4 — Plugin composition pipeline
-// ─────────────────────────────────────────────────────────────────────────────
-
 describe("Fix #4: Plugin composition pipeline", () => {
   it("useTranslateMiddleware composes correctly", () => {
     const i18n = createI18n<Messages>({
@@ -255,8 +235,6 @@ describe("Fix #4: Plugin composition pipeline", () => {
 
     i18n.t("hello" as never);
 
-    // middleware1 is outermost (registered first, applied last in rebuild).
-    // So it runs first, then middleware2, then base.
     expect(callOrder[0]).toBe("middleware1");
     expect(callOrder[1]).toBe("middleware2");
   });
@@ -279,13 +257,11 @@ describe("Fix #4: Plugin composition pipeline", () => {
       return next(key, params, opts);
     });
 
-    // Remove first middleware.
     cleanup1();
 
     callOrder.length = 0;
     i18n.t("hello" as never);
 
-    // Only m2 should run.
     expect(callOrder).toEqual(["m2"]);
   });
 
@@ -329,23 +305,16 @@ describe("Fix #4: Plugin composition pipeline", () => {
     const cleanupDev = devOverlayPlugin(i18n, { log: false });
     const cleanupIcu = icuPluralizePlugin(i18n);
 
-    // Both should work.
     expect(i18n.t("items" as never, { count: 1 } as never)).toBe("1 item");
 
-    // Cleanup in any order should work.
     cleanupDev();
     cleanupIcu();
 
-    // After cleanup, t should work without plugins.
     expect(i18n.t("items" as never, { count: 1 } as never)).toBe("{count, plural, one {# item} other {# items}}");
 
     warnSpy.mockRestore();
   });
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #5 — detectLocalePlugin reDetect
-// ─────────────────────────────────────────────────────────────────────────────
 
 describe("Fix #5: detectLocalePlugin reDetect", () => {
   it("returns reDetect function", () => {
@@ -366,11 +335,9 @@ describe("Fix #5: detectLocalePlugin reDetect", () => {
 
     const { reDetect } = detectLocalePlugin(i18n, { order: ["fallback"] });
 
-    // Change locale manually.
     i18n.setLocale("es");
     expect(i18n.locale.value).toBe("es");
 
-    // Re-detect should set it back to fallback.
     reDetect();
     expect(i18n.locale.value).toBe("en"); // fallback is "en"
   });
@@ -385,10 +352,6 @@ describe("Fix #5: detectLocalePlugin reDetect", () => {
     expect(typeof (i18n as { reDetect?: () => void }).reDetect).toBe("function");
   });
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #6 — stableStringify for Map, Set, Date
-// ─────────────────────────────────────────────────────────────────────────────
 
 describe("Fix #6: stableStringify — Map, Set, Date, circular", () => {
   it("serializes Date deterministically (UTC ISO)", () => {
@@ -437,10 +400,6 @@ describe("Fix #6: stableStringify — Map, Set, Date, circular", () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #7 — headPlugin cleans orphan meta tags
-// ─────────────────────────────────────────────────────────────────────────────
-
 describe("Fix #7: headPlugin cleans orphan meta tags", () => {
   beforeEach(() => {
     document.head.innerHTML = "";
@@ -458,14 +417,12 @@ describe("Fix #7: headPlugin cleans orphan meta tags", () => {
       meta: [{ name: "description", content: (l) => `Desc in ${l}` }],
     });
 
-    // Initial — one meta tag.
     let metas = document.querySelectorAll('meta[name="description"]');
     expect(metas.length).toBe(1);
     expect((metas[0] as HTMLMetaElement).content).toBe("Desc in es");
 
     i18n.setLocale("en");
 
-    // After change — still only one meta tag (old one removed).
     metas = document.querySelectorAll('meta[name="description"]');
     expect(metas.length).toBe(1);
     expect((metas[0] as HTMLMetaElement).content).toBe("Desc in en");
@@ -521,24 +478,16 @@ describe("Fix #7: headPlugin cleans orphan meta tags", () => {
       meta: [{ name: "description", content: "Test" }],
     });
 
-    // External tag should remain.
     expect(document.querySelector('meta[name="viewport"]')).not.toBeNull();
 
-    // Plugin tag should be present.
     expect(document.querySelector('meta[name="description"]')).not.toBeNull();
 
     cleanup();
 
-    // External tag should still remain after cleanup.
     expect(document.querySelector('meta[name="viewport"]')).not.toBeNull();
-    // Plugin tag should be removed.
     expect(document.querySelector('meta[name="description"]')).toBeNull();
   });
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Fix #8 — ICU MessageFormat: select, selectordinal, nested
-// ─────────────────────────────────────────────────────────────────────────────
 
 describe("Fix #8: ICU MessageFormat — select, selectordinal, nested", () => {
   it("handles plural (backward compat)", () => {

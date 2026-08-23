@@ -22,7 +22,6 @@ export function jsonBackend<TMessages extends Messages>(
       const cacheKey = `${locale}:${namespace}`;
       const cached = cache.get(cacheKey);
 
-      // Return cached entry if still valid.
       if (cached && (cacheTtl === 0 || Date.now() < cached.expiresAt)) {
         return cached.promise;
       }

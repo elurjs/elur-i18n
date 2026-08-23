@@ -1,6 +1,5 @@
 /**
  * Stable stringify that handles Map, Set, Date, and circular references.
- * (Fix #6 — v1.3)
  *
  * - Date → ISO UTC string (deterministic across timezones)
  * - Map → sorted entries as [["key","value"],...]
@@ -14,7 +13,6 @@ export function stableStringify(value: unknown): string {
 }
 
 function _stringify(value: unknown, seen: WeakSet<object>): string {
-  // Primitives.
   if (value === null) return "null";
   if (typeof value === "string") return JSON.stringify(value);
   if (typeof value === "number" || typeof value === "boolean") return String(value);
@@ -26,7 +24,6 @@ function _stringify(value: unknown, seen: WeakSet<object>): string {
     return JSON.stringify(value.toISOString());
   }
 
-  // Map → sorted entries.
   if (value instanceof Map) {
     if (seen.has(value)) throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");
     seen.add(value);
@@ -39,7 +36,6 @@ function _stringify(value: unknown, seen: WeakSet<object>): string {
     return `[${parts.join(",")}]`;
   }
 
-  // Set → sorted values.
   if (value instanceof Set) {
     if (seen.has(value)) throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");
     seen.add(value);
@@ -51,14 +47,12 @@ function _stringify(value: unknown, seen: WeakSet<object>): string {
     return `[${values.map((v) => _stringify(v, seen)).join(",")}]`;
   }
 
-  // Arrays.
   if (Array.isArray(value)) {
     if (seen.has(value)) throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");
     seen.add(value);
     return `[${value.map((v) => _stringify(v, seen)).join(",")}]`;
   }
 
-  // Objects.
   if (typeof value === "object") {
     if (seen.has(value as object)) {
       throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");

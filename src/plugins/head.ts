@@ -25,11 +25,9 @@ export function headPlugin<TMessages extends Messages>(
       document.documentElement.dir = dir === "auto" ? getDir(locale) : dir;
     }
 
-    // Remove all previously injected meta tags (Fix #7).
     const previous = document.querySelectorAll(`meta[${DATA_ATTR}]`);
     previous.forEach((el) => el.remove());
 
-    // Inject fresh meta tags for the current locale.
     for (const item of meta) {
       const content = typeof item.content === "function" ? item.content(locale) : item.content;
       setMeta(item.name, content);
@@ -50,7 +48,6 @@ export function headPlugin<TMessages extends Messages>(
 
   return () => {
     unwatch();
-    // Clean up all injected meta tags on dispose.
     if (typeof document !== "undefined") {
       const injected = document.querySelectorAll(`meta[${DATA_ATTR}]`);
       injected.forEach((el) => el.remove());

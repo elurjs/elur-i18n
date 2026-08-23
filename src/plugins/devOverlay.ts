@@ -4,7 +4,7 @@ export type DevOverlayOptions = {
   log?: boolean;
   overlay?: boolean;
   /**
-   * If true, uses the middleware pipeline (v1.3). If false, uses the legacy
+   * If true, uses the middleware pipeline. If false, uses the legacy
    * mutation pattern (backward compatible). @default true
    */
   useMiddleware?: boolean;
@@ -33,7 +33,6 @@ export function devOverlayPlugin<TMessages extends Messages>(
     };
   };
 
-  // Middleware-based (v1.3 — Fix #4): uses the composition pipeline.
   if (useMiddleware && i18n.useTranslateMiddleware) {
     return i18n.useTranslateMiddleware(middleware);
   }

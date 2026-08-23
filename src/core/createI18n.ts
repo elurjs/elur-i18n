@@ -29,10 +29,11 @@ export function createI18n<TMessages extends Messages = Messages>(
   const baseT = createTranslate<TMessages>(store as I18nInstance<TMessages>);
   const n = createPlural(baseT);
 
-  // ─── Translate middleware pipeline (Fix #4) ────────────────────────────
-  // Instead of plugins mutating i18n.t directly, they register middleware
-  // here. The pipeline is rebuilt on each registration/removal, ensuring
-  // correct LIFO cleanup order.
+  /**
+   * Middleware pipeline for translate. Instead of plugins mutating `i18n.t`
+   * directly, they register middleware here. The pipeline is rebuilt on each
+   * registration/removal, ensuring correct LIFO cleanup order.
+   */
   const middlewares: TranslateMiddleware[] = [];
 
   function rebuildT() {
@@ -42,7 +43,6 @@ export function createI18n<TMessages extends Messages = Messages>(
       fn = middlewares[i](fn);
     }
     i18n.t = fn as I18nInstance<TMessages>["t"];
-    // Rebuild namespace API to use the new t.
     i18n.useNamespace = (namespace: string) =>
       createNamespaceApi<TMessages>(i18n.t, n, namespace);
   }
@@ -82,7 +82,6 @@ export function createI18n<TMessages extends Messages = Messages>(
   if (options.detect) {
     const detectOptions = typeof options.detect === "object" ? options.detect : {};
     const result = detectLocalePlugin(i18n, detectOptions);
-    // Expose reDetect on the instance (Fix #5).
     (i18n as I18nInstance<TMessages> & { reDetect?: () => void }).reDetect = result.reDetect;
   }
 

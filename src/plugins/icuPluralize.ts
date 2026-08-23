@@ -2,11 +2,11 @@ import type { I18nInstance, Messages, TranslateMiddleware } from "../core/types"
 
 export type PluralCategory = "zero" | "one" | "two" | "few" | "many" | "other";
 
-// ─── ICU MessageFormat parser (Fix #8 — v1.3) ──────────────────────────────
-// Supports: plural, select, selectordinal, and nested messages.
-// This is a lightweight implementation covering the most common ICU features
-// without requiring a full ICU library dependency.
-
+/**
+ * Lightweight ICU MessageFormat parser. Supports plural, select,
+ * selectordinal, and nested messages — the most common ICU features,
+ * without requiring a full ICU library dependency.
+ */
 type IcuNode =
   | { type: "text"; value: string }
   | { type: "argument"; name: string }
@@ -83,8 +83,6 @@ function selectPluralCategory(
   if (categories.includes(intlCategory)) return intlCategory;
   return "other";
 }
-
-// ─── ICU Parser ──────────────────────────────────────────────────────────────
 
 function createIcuParser(text: string) {
   let pos = 0;
@@ -234,18 +232,13 @@ function createIcuParser(text: string) {
   return { parseNodes };
 }
 
-// ─── Backward-compatible icuPluralize function ──────────────────────────────
-
 export function icuPluralize(
   template: string,
   count: number,
   locale: string,
 ): string {
-  // Use the full ICU parser now (Fix #8).
   return icuFormat(template, { count }, locale);
 }
-
-// ─── Plugin ──────────────────────────────────────────────────────────────────
 
 export function icuPluralizePlugin<TMessages extends Messages>(
   i18n: I18nInstance<TMessages>,
@@ -256,7 +249,6 @@ export function icuPluralizePlugin<TMessages extends Messages>(
   const middleware: TranslateMiddleware = (next) => {
     return (key, params, tOptions) => {
       const result = next(key, params, tOptions);
-      // Check if the result contains any ICU message format syntax.
       if (params && result.includes("{") && /\{\w+,\s*(plural|select|selectordinal)/.test(result)) {
         return icuFormat(result, params as Record<string, unknown>, i18n.locale.value);
       }
@@ -264,7 +256,6 @@ export function icuPluralizePlugin<TMessages extends Messages>(
     };
   };
 
-  // Middleware-based (v1.3 — Fix #4): uses the composition pipeline.
   if (useMiddleware && i18n.useTranslateMiddleware) {
     return i18n.useTranslateMiddleware(middleware);
   }
