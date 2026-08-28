@@ -1,4 +1,4 @@
-import type { Validator } from "@deijose/nix-js";
+import type { Validator } from "@elurjs/core";
 import type { I18nInstance, InterpolationMap, Messages } from "../core/types";
 
 export type FormValidationPluginOptions = {

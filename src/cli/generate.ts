@@ -1,10 +1,10 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
-const usage = `Usage: nix-i18n-generate <paths...> --locales <es,en> [--output <file>]
+const usage = `Usage: elur-i18n-generate <paths...> --locales <es,en> [--output <file>]
 
 Generates a JSON translation file with empty values for every locale from the
-keys found in source files. Uses the same key extraction rules as nix-i18n-extract.
+keys found in source files. Uses the same key extraction rules as elur-i18n-extract.
 `;
 
 function main() {

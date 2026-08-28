@@ -1,4 +1,4 @@
-import { Signal } from "@deijose/nix-js";
+import { Signal } from "@elurjs/core";
 import type { InterpolationMap, InterpolationValue } from "./types";
 
 export function readValue(value: InterpolationValue): string {

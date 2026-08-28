@@ -1,4 +1,4 @@
-import { createInjectionKey } from "@deijose/nix-js";
+import { createInjectionKey } from "@elurjs/core";
 import { createI18nStore } from "./createI18nStore";
 import { createTranslate, createPlural, createNamespaceApi } from "./translate";
 import { createDateFormatter } from "../format/date";
@@ -16,7 +16,7 @@ import type {
   InterpolationMap,
 } from "./types";
 
-export const I18nInjectionKey = createInjectionKey<I18nInstance>("nix-i18n");
+export const I18nInjectionKey = createInjectionKey<I18nInstance>("elur-i18n");
 
 export function createI18n<TMessages extends Messages = Messages>(
   options: I18nOptions<TMessages>,

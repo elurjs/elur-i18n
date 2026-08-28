@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { Validator } from "@deijose/nix-js";
+import type { Validator } from "@elurjs/core";
 import { createI18n } from "../core/createI18n";
 import { formValidationPlugin, createI18nValidator } from "../plugins/forms";
 import type { Messages } from "../core/types";

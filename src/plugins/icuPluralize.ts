@@ -166,7 +166,7 @@ function createIcuParser(text: string) {
 
     // Unknown function or unclosed argument — throw so icuFormat falls back.
     if (pos >= text.length) {
-      throw new Error("[nix-i18n] Unclosed ICU argument");
+      throw new Error("[elur-i18n] Unclosed ICU argument");
     }
     while (pos < text.length && text[pos] !== "}") pos++;
     if (text[pos] === "}") pos++;

@@ -10,7 +10,7 @@ export function detectLocalePlugin<TMessages extends Messages>(
   options: DetectOptions = {},
 ): DetectLocalePluginResult {
   const order = options.order ?? ["localStorage", "navigator", "fallback"];
-  const storageKey = options.storageKey ?? "nix-i18n-locale";
+  const storageKey = options.storageKey ?? "elur-i18n-locale";
   const urlParam = options.urlParam ?? "lang";
 
   function detect() {

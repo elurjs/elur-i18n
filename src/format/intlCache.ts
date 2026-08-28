@@ -25,7 +25,7 @@ function _stringify(value: unknown, seen: WeakSet<object>): string {
   }
 
   if (value instanceof Map) {
-    if (seen.has(value)) throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");
+    if (seen.has(value)) throw new TypeError("[elur-i18n] Circular reference detected in stableStringify");
     seen.add(value);
     const entries = [...value.entries()].sort((a, b) => {
       const sa = stableStringify(a[0]);
@@ -37,7 +37,7 @@ function _stringify(value: unknown, seen: WeakSet<object>): string {
   }
 
   if (value instanceof Set) {
-    if (seen.has(value)) throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");
+    if (seen.has(value)) throw new TypeError("[elur-i18n] Circular reference detected in stableStringify");
     seen.add(value);
     const values = [...value].sort((a, b) => {
       const sa = stableStringify(a);
@@ -48,14 +48,14 @@ function _stringify(value: unknown, seen: WeakSet<object>): string {
   }
 
   if (Array.isArray(value)) {
-    if (seen.has(value)) throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");
+    if (seen.has(value)) throw new TypeError("[elur-i18n] Circular reference detected in stableStringify");
     seen.add(value);
     return `[${value.map((v) => _stringify(v, seen)).join(",")}]`;
   }
 
   if (typeof value === "object") {
     if (seen.has(value as object)) {
-      throw new TypeError("[nix-i18n] Circular reference detected in stableStringify");
+      throw new TypeError("[elur-i18n] Circular reference detected in stableStringify");
     }
     seen.add(value as object);
     const keys = Object.keys(value).sort();

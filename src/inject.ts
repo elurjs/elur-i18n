@@ -1,4 +1,4 @@
-import { inject } from "@deijose/nix-js";
+import { inject } from "@elurjs/core";
 import { I18nInjectionKey } from "./core/createI18n";
 import type { I18nInstance, Messages } from "./core/types";
 

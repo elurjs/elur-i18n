@@ -1,5 +1,5 @@
-import { watch } from "@deijose/nix-js";
-import type { Router } from "@deijose/nix-js";
+import { watch } from "@elurjs/core";
+import type { Router } from "@elurjs/core";
 import type { I18nInstance, Messages } from "../core/types";
 
 export type RouterLocaleMode = "prefix" | "query" | "subdomain";

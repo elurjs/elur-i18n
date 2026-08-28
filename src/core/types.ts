@@ -1,4 +1,4 @@
-import type { Signal, Store } from "@deijose/nix-js";
+import type { Signal, Store } from "@elurjs/core";
 
 export type Primitive = string | number | boolean | null | undefined;
 

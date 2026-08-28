@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { signal } from "@deijose/nix-js";
+import { signal } from "@elurjs/core";
 import { interpolate, readValue, collectParams } from "../core/interpolate";
 
 describe("interpolate", () => {

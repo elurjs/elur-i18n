@@ -1,4 +1,4 @@
-import { watch } from "@deijose/nix-js";
+import { watch } from "@elurjs/core";
 import type { I18nInstance, Messages } from "../core/types";
 
 export type SyncLocaleOptions = {
@@ -13,7 +13,7 @@ export function syncLocalePlugin<TMessages extends Messages>(
     return () => {};
   }
 
-  const channelName = options.channelName ?? "nix-i18n-locale";
+  const channelName = options.channelName ?? "elur-i18n-locale";
   const channel = new BroadcastChannel(channelName);
 
   channel.onmessage = (event) => {

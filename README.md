@@ -1,10 +1,10 @@
-# @deijose/nix-i18n
+# @elurjs/i18n
 
-Internationalization library for [Nix.js](https://nix-js.dev) built on signals and stores.
+Internationalization library for [Elur](https://elur.dev) built on signals and stores.
 
 ## Features
 
-- Reactive translations powered by Nix.js signals.
+- Reactive translations powered by Elur signals.
 - Zero runtime dependencies (uses native `Intl` API).
 - Small bundle size (~4-5 KB typical).
 - Type-safe keys and interpolation parameters.
@@ -21,20 +21,20 @@ Internationalization library for [Nix.js](https://nix-js.dev) built on signals a
 ## Installation
 
 ```bash
-npm install @deijose/nix-i18n
+npm install @elurjs/i18n
 ```
 
 Peer dependency:
 
 ```bash
-npm install @deijose/nix-js
+npm install @elurjs/core
 ```
 
 ## Quick start
 
 ```ts
-import { createI18n } from "@deijose/nix-i18n";
-import { html } from "@deijose/nix-js";
+import { createI18n } from "@elurjs/i18n";
+import { html } from "@elurjs/core";
 
 const i18n = createI18n({
   locale: "es",
@@ -101,7 +101,7 @@ i18n.t("auth:login.title");
 ### JSON backend
 
 ```ts
-import { jsonBackend } from "@deijose/nix-i18n/backends/json";
+import { jsonBackend } from "@elurjs/i18n/backends/json";
 
 const i18n = createI18n({
   locale: "es",
@@ -120,7 +120,7 @@ Loads `/locales/es/common.json`, `/locales/en/common.json`, etc.
 ### API backend
 
 ```ts
-import { apiBackend } from "@deijose/nix-i18n/backends/api";
+import { apiBackend } from "@elurjs/i18n/backends/api";
 
 const i18n = createI18n({
   locale: "es",
@@ -151,7 +151,7 @@ i18n.list(["a", "b", "c"], { type: "conjunction" });
 ### Persist locale
 
 ```ts
-import { persistLocalePlugin } from "@deijose/nix-i18n/plugins/persist";
+import { persistLocalePlugin } from "@elurjs/i18n/plugins/persist";
 
 persistLocalePlugin(i18n, { key: "app-locale" });
 ```
@@ -159,7 +159,7 @@ persistLocalePlugin(i18n, { key: "app-locale" });
 ### Detect locale
 
 ```ts
-import { detectLocalePlugin } from "@deijose/nix-i18n/plugins/detect";
+import { detectLocalePlugin } from "@elurjs/i18n/plugins/detect";
 
 // Returns { reDetect } — call reDetect() to re-run detection after URL/storage changes.
 const { reDetect } = detectLocalePlugin(i18n, {
@@ -179,7 +179,7 @@ i18n.reDetect?.();
 ### Router integration
 
 ```ts
-import { routerLocalePlugin } from "@deijose/nix-i18n/plugins/router";
+import { routerLocalePlugin } from "@elurjs/i18n/plugins/router";
 
 routerLocalePlugin(i18n, router, { mode: "query" });
 ```
@@ -187,7 +187,7 @@ routerLocalePlugin(i18n, router, { mode: "query" });
 ### Head tags
 
 ```ts
-import { headPlugin } from "@deijose/nix-i18n/plugins/head";
+import { headPlugin } from "@elurjs/i18n/plugins/head";
 
 const cleanup = headPlugin(i18n, {
   lang: true,
@@ -198,12 +198,12 @@ const cleanup = headPlugin(i18n, {
 // Call cleanup() to remove all injected meta tags
 ```
 
-**v1.3:** Meta tags injected by the plugin are marked with `data-nix-i18n-head` and automatically removed on locale change (no more orphan tags from previous locales) and on cleanup.
+**v1.3:** Meta tags injected by the plugin are marked with `data-elur-i18n-head` and automatically removed on locale change (no more orphan tags from previous locales) and on cleanup.
 
 ### Cross-tab sync
 
 ```ts
-import { syncLocalePlugin } from "@deijose/nix-i18n/plugins/sync";
+import { syncLocalePlugin } from "@elurjs/i18n/plugins/sync";
 
 syncLocalePlugin(i18n);
 ```
@@ -211,7 +211,7 @@ syncLocalePlugin(i18n);
 ### Form validation
 
 ```ts
-import { formValidationPlugin } from "@deijose/nix-i18n/plugins/forms";
+import { formValidationPlugin } from "@elurjs/i18n/plugins/forms";
 
 const validators = formValidationPlugin(i18n, {
   required: () => (value) => value ? undefined : "required",
@@ -222,7 +222,7 @@ const validators = formValidationPlugin(i18n, {
 ### ICU MessageFormat
 
 ```ts
-import { icuPluralizePlugin } from "@deijose/nix-i18n/plugins/icuPluralize";
+import { icuPluralizePlugin } from "@elurjs/i18n/plugins/icuPluralize";
 
 icuPluralizePlugin(i18n);
 
@@ -261,7 +261,7 @@ i18n.t("items", { count: 0 }); // "no items"
 ### Dev overlay
 
 ```ts
-import { devOverlayPlugin } from "@deijose/nix-i18n/plugins/devOverlay";
+import { devOverlayPlugin } from "@elurjs/i18n/plugins/devOverlay";
 
 devOverlayPlugin(i18n, { log: true, overlay: true });
 ```
@@ -288,7 +288,7 @@ cleanup();
 Extract translation keys from source files using AST parsing (Babel parser):
 
 ```bash
-npx nix-i18n-extract src --output extracted-keys.json
+npx elur-i18n-extract src --output extracted-keys.json
 ```
 
 **v1.3:** The extractor now uses `@babel/parser` instead of regex, providing reliable extraction in TypeScript/JSX/TSX code. It correctly handles:
@@ -302,7 +302,7 @@ npx nix-i18n-extract src --output extracted-keys.json
 Generate a JSON translation file with empty values for multiple locales:
 
 ```bash
-npx nix-i18n-generate src --locales es,en --output translations.json
+npx elur-i18n-generate src --locales es,en --output translations.json
 ```
 
 ## TypeScript

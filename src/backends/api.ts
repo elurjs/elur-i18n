@@ -47,7 +47,7 @@ export function apiBackend<TMessages extends Messages>(
 
       const promise = fetch(url.toString(), init)
         .then((res) => {
-          if (!res.ok) throw new Error(`[nix-i18n] API error: ${res.status}`);
+          if (!res.ok) throw new Error(`[elur-i18n] API error: ${res.status}`);
           return res.json() as Promise<Partial<TMessages>>;
         })
         .then((data) => {
@@ -61,7 +61,7 @@ export function apiBackend<TMessages extends Messages>(
         .catch((err) => {
           // Don't cache errors — remove any stale entry so retries can happen.
           cache.delete(cacheKey);
-          console.error(`[nix-i18n] Error loading translations from API:`, err);
+          console.error(`[elur-i18n] Error loading translations from API:`, err);
           return {} as Partial<TMessages>;
         });
 

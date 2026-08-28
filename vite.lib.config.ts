@@ -9,7 +9,7 @@ export default defineConfig({
     sourcemap: true,
     lib: {
       entry: {
-        "nix-i18n": resolve("src/index.ts"),
+        "elur-i18n": resolve("src/index.ts"),
         "format/date": resolve("src/format/date.ts"),
         "format/number": resolve("src/format/number.ts"),
         "format/currency": resolve("src/format/currency.ts"),
@@ -34,11 +34,11 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format === "cjs" ? "cjs" : "js"}`,
     },
     rollupOptions: {
-      external: ["@deijose/nix-js", "@babel/parser"],
+      external: ["@elurjs/core", "@babel/parser"],
       output: {
         preserveModules: false,
         globals: {
-          "@deijose/nix-js": "NixJs",
+          "@elurjs/core": "ElurJs",
         },
       },
     },

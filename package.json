@@ -1,22 +1,22 @@
 {
-  "name": "@deijose/nix-i18n",
+  "name": "@elurjs/i18n",
   "version": "1.3.2",
-  "description": "Internationalization library for Nix.js built on signals and stores",
+  "description": "Internationalization library for Elur built on signals and stores",
   "license": "MIT",
   "author": "Deiver Vasquez",
   "type": "module",
-  "homepage": "https://github.com/DeijoseDevelop/nix-i18n",
+  "homepage": "https://github.com/elurjs/elur-i18n",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DeijoseDevelop/nix-i18n.git"
+    "url": "git+https://github.com/elurjs/elur-i18n.git"
   },
-  "main": "./dist/lib/nix-i18n.cjs",
-  "module": "./dist/lib/nix-i18n.js",
+  "main": "./dist/lib/elur-i18n.cjs",
+  "module": "./dist/lib/elur-i18n.js",
   "types": "./dist/lib/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/lib/nix-i18n.js",
-      "require": "./dist/lib/nix-i18n.cjs",
+      "import": "./dist/lib/elur-i18n.js",
+      "require": "./dist/lib/elur-i18n.cjs",
       "types": "./dist/lib/index.d.ts"
     },
     "./format/*": {
@@ -36,7 +36,7 @@
     }
   },
   "keywords": [
-    "nix-js",
+    "elur",
     "i18n",
     "internationalization",
     "localization",
@@ -55,15 +55,15 @@
     "node": ">=18.0.0"
   },
   "bin": {
-    "nix-i18n-extract": "dist/lib/cli/extract.js",
-    "nix-i18n-generate": "dist/lib/cli/generate.js"
+    "elur-i18n-extract": "dist/lib/cli/extract.js",
+    "elur-i18n-generate": "dist/lib/cli/generate.js"
   },
   "scripts": {
     "dev": "vite",
     "build": "bun run typecheck && vite build",
     "preview": "vite preview",
     "clean:lib": "rm -rf dist/lib",
-    "build:lib": "vite build --config vite.lib.config.ts && tsc --project tsconfig.lib.json && terser dist/lib/nix-i18n.js -c -m -o dist/lib/nix-i18n.js && terser dist/lib/nix-i18n.cjs -c -m -o dist/lib/nix-i18n.cjs",
+    "build:lib": "vite build --config vite.lib.config.ts && tsc --project tsconfig.lib.json && terser dist/lib/elur-i18n.js -c -m -o dist/lib/elur-i18n.js && terser dist/lib/elur-i18n.cjs -c -m -o dist/lib/elur-i18n.cjs",
     "prepack": "bun run clean:lib && bun run build:lib",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -71,15 +71,15 @@
     "generate": "bun run src/cli/generate.ts"
   },
   "peerDependencies": {
-    "@deijose/nix-js": "^2.5.3 || ^3.0.0"
+    "@elurjs/core": "^2.5.3 || ^3.0.0"
   },
   "peerDependenciesMeta": {
-    "@deijose/nix-js": {
+    "@elurjs/core": {
       "optional": false
     }
   },
   "devDependencies": {
-    "@deijose/nix-js": "3.5.0",
+    "@elurjs/core": "3.5.0",
     "happy-dom": "^20.8.3",
     "jsdom": "^29.1.1",
     "terser": "^5.46.0",

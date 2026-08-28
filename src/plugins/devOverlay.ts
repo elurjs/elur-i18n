@@ -23,7 +23,7 @@ export function devOverlayPlugin<TMessages extends Messages>(
       if (result === key) {
         missing.add(key);
         if (log) {
-          console.warn(`[nix-i18n] Missing key: ${key}`);
+          console.warn(`[elur-i18n] Missing key: ${key}`);
         }
         if (overlay && typeof document !== "undefined") {
           renderOverlay(missing);
@@ -45,7 +45,7 @@ export function devOverlayPlugin<TMessages extends Messages>(
     if (result === key) {
       missing.add(key);
       if (log) {
-        console.warn(`[nix-i18n] Missing key: ${key}`);
+        console.warn(`[elur-i18n] Missing key: ${key}`);
       }
       if (overlay && typeof document !== "undefined") {
         renderOverlay(missing);

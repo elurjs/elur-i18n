@@ -1,4 +1,4 @@
-import { watch } from "@deijose/nix-js";
+import { watch } from "@elurjs/core";
 import type { I18nInstance, Messages } from "../core/types";
 
 export type HeadOptions = {
@@ -7,7 +7,7 @@ export type HeadOptions = {
   meta?: Array<{ name: string; content?: string | ((locale: string) => string) }>;
 };
 
-const DATA_ATTR = "data-nix-i18n-head";
+const DATA_ATTR = "data-elur-i18n-head";
 
 export function headPlugin<TMessages extends Messages>(
   i18n: I18nInstance<TMessages>,

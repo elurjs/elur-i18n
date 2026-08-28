@@ -1,4 +1,4 @@
-import { createStore, computed, batch } from "@deijose/nix-js";
+import { createStore, computed, batch } from "@elurjs/core";
 import type { I18nBackend, I18nOptions, I18nStore, Messages } from "./types";
 
 export function createI18nStore<TMessages extends Messages>(
@@ -15,7 +15,7 @@ export function createI18nStore<TMessages extends Messages>(
       isLoading: false as boolean,
     },
     {
-      name: "nix-i18n",
+      name: "elur-i18n",
       actions: (s) => ({
         setLocale(locale: string) {
           s.locale.value = locale;

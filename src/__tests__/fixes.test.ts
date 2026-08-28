@@ -440,7 +440,7 @@ describe("Fix #7: headPlugin cleans orphan meta tags", () => {
 
     const meta = document.querySelector('meta[name="og:title"]');
     expect(meta).not.toBeNull();
-    expect(meta!.getAttribute("data-nix-i18n-head")).toBe("true");
+    expect(meta!.getAttribute("data-elur-i18n-head")).toBe("true");
   });
 
   it("cleanup removes all injected meta tags", () => {
@@ -456,11 +456,11 @@ describe("Fix #7: headPlugin cleans orphan meta tags", () => {
       ],
     });
 
-    expect(document.querySelectorAll('meta[data-nix-i18n-head]').length).toBe(2);
+    expect(document.querySelectorAll('meta[data-elur-i18n-head]').length).toBe(2);
 
     cleanup();
 
-    expect(document.querySelectorAll('meta[data-nix-i18n-head]').length).toBe(0);
+    expect(document.querySelectorAll('meta[data-elur-i18n-head]').length).toBe(0);
   });
 
   it("does not remove meta tags not injected by the plugin", () => {

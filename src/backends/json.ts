@@ -29,7 +29,7 @@ export function jsonBackend<TMessages extends Messages>(
       const url = `${baseUrl.replace(/\/$/, "")}/${locale}/${namespace}.json`;
       const promise = fetch(url)
         .then((res) => {
-          if (!res.ok) throw new Error(`[nix-i18n] Failed to load ${url}: ${res.status}`);
+          if (!res.ok) throw new Error(`[elur-i18n] Failed to load ${url}: ${res.status}`);
           return res.json() as Promise<Partial<TMessages>>;
         })
         .then((data) => {
@@ -43,7 +43,7 @@ export function jsonBackend<TMessages extends Messages>(
         .catch((err) => {
           // Don't cache errors — remove entry so retries can happen.
           cache.delete(cacheKey);
-          console.error(`[nix-i18n] Error loading namespace "${namespace}" for locale "${locale}":`, err);
+          console.error(`[elur-i18n] Error loading namespace "${namespace}" for locale "${locale}":`, err);
           return {} as Partial<TMessages>;
         });
 

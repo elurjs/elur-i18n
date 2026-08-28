@@ -15,7 +15,7 @@ describe("devOverlayPlugin", () => {
     devOverlayPlugin(i18n, { log: true });
     i18n.t("missingKey");
 
-    expect(warn).toHaveBeenCalledWith("[nix-i18n] Missing key: missingKey");
+    expect(warn).toHaveBeenCalledWith("[elur-i18n] Missing key: missingKey");
     warn.mockRestore();
   });
 

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { parse } from "@babel/parser";
 
-const usage = `Usage: nix-i18n-extract <paths...> [--output <file>]
+const usage = `Usage: elur-i18n-extract <paths...> [--output <file>]
 
 Extracts translation keys from source files by parsing calls to t(), n(),
 i18n.t(), i18n.n(), etc. Uses an AST parser (Babel) for reliable extraction
