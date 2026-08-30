@@ -27,6 +27,7 @@ export default defineConfig({
         "plugins/head": resolve("src/plugins/head.ts"),
         "plugins/icuPluralize": resolve("src/plugins/icuPluralize.ts"),
         "plugins/devOverlay": resolve("src/plugins/devOverlay.ts"),
+        devtools: resolve("src/devtools.ts"),
         "cli/extract": resolve("src/cli/extract.ts"),
         "cli/generate": resolve("src/cli/generate.ts"),
       },

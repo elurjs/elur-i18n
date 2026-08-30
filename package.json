@@ -1,6 +1,6 @@
 {
   "name": "@elurjs/i18n",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "Internationalization library for Elur built on signals and stores",
   "license": "MIT",
   "author": "Deiver Vasquez",
@@ -33,6 +33,11 @@
       "import": "./dist/lib/plugins/*.js",
       "require": "./dist/lib/plugins/*.cjs",
       "types": "./dist/lib/plugins/*.d.ts"
+    },
+    "./devtools": {
+      "import": "./dist/lib/devtools.js",
+      "require": "./dist/lib/devtools.cjs",
+      "types": "./dist/lib/devtools.d.ts"
     }
   },
   "keywords": [

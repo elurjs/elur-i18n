@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.0
+
+### Added
+
+- **DevTools plugin entry point** (`@elurjs/i18n/devtools`): dev-only module
+  that registers an `i18n` plugin on the elur DevTools backend hook
+  (`window.__ELUR_DEVTOOLS_HOOK__`), exposing every live i18n instance
+  (locale, fallback locale, loaded namespaces, per-locale message key
+  counts). Instances are tracked via a global `Symbol.for` registry
+  populated in `createI18n` — negligible cost, no behavior changes. Never
+  loaded in production: `@elurjs/vite-plugin-elur` injects it automatically
+  in dev mode (`devtools: "auto"`).
+
 ## 1.3.0
 
 ### Fixed

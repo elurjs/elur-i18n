@@ -27,6 +27,7 @@
     "src/plugins/head.ts",
     "src/plugins/icuPluralize.ts",
     "src/plugins/devOverlay.ts",
+    "src/devtools.ts",
     "src/cli/extract.ts",
     "src/cli/generate.ts"
   ],

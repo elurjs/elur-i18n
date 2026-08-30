@@ -18,6 +18,23 @@ import type {
 
 export const I18nInjectionKey = createInjectionKey<I18nInstance>("elur-i18n");
 
+/**
+ * @internal — Global registry of live i18n instances for devtools.
+ * Shared via `Symbol.for` so it survives module duplication in bundles.
+ * Instances are app-lifetime singletons, so a strong Set is fine.
+ */
+const _instancesKey = Symbol.for("@elurjs/i18n/instances");
+
+function _registerI18nInstance(instance: I18nInstance<any>): void {
+  const g = globalThis as Record<PropertyKey, unknown>;
+  let set = g[_instancesKey] as Set<I18nInstance<any>> | undefined;
+  if (!set) {
+    set = new Set();
+    g[_instancesKey] = set;
+  }
+  set.add(instance);
+}
+
 export function createI18n<TMessages extends Messages = Messages>(
   options: I18nOptions<TMessages>,
 ): I18nInstance<TMessages> {
@@ -90,6 +107,8 @@ export function createI18n<TMessages extends Messages = Messages>(
       void i18n.loadNamespace(ns);
     }
   }
+
+  _registerI18nInstance(i18n);
 
   return i18n;
 }
