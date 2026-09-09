@@ -79,12 +79,12 @@
     "@elurjs/core": "^3.0.0"
   },
   "devDependencies": {
-    "@elurjs/core": "3.5.0",
+    "@elurjs/core": "^3.6.2",
     "jsdom": "^29.1.1",
     "terser": "^5.46.0",
     "typescript": "~7.0.2",
     "vite": "^8.0.0",
-    "vitest": "^4.0.18"
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "@babel/parser": "^8.0.4"
