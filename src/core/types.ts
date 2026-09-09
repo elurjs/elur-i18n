@@ -1,6 +1,6 @@
 import type { Signal, Store } from "@elurjs/core";
 
-export type Primitive = string | number | boolean | null | undefined;
+type Primitive = string | number | boolean | null | undefined;
 
 export type MessageValue = string | { [key: string]: MessageValue };
 
@@ -38,7 +38,7 @@ export type DetectOptions = {
   pathPrefix?: boolean | string;
 };
 
-export type I18nStoreState<TMessages extends Messages = Messages> = {
+type I18nStoreState<TMessages extends Messages = Messages> = {
   locale: string;
   messages: Record<string, Partial<TMessages>>;
   loadedNamespaces: string[];
@@ -141,7 +141,7 @@ export type ListFormatterFn = (
   options?: Intl.ListFormatOptions,
 ) => string;
 
-export interface MessageSchema {
+interface MessageSchema {
   [key: string]: MessageValue;
 }
 
@@ -157,7 +157,7 @@ type DeepPaths<T, Depth extends number = 5> = Depth extends never
   }[keyof T & string]
   : "";
 
-export type MessagePath<TMessages extends Messages = MessageSchema> =
+type MessagePath<TMessages extends Messages = MessageSchema> =
   DeepPaths<TMessages> | string;
 
 type ExtractInterpolationKeys<S extends string> =
@@ -167,7 +167,7 @@ type ExtractInterpolationKeys<S extends string> =
   : Key | ExtractInterpolationKeys<Rest>
   : never;
 
-export type InterpolationParams<S extends string> = [ExtractInterpolationKeys<S>] extends [never]
+type InterpolationParams<S extends string> = [ExtractInterpolationKeys<S>] extends [never]
   ? InterpolationMap | undefined
   : { [P in ExtractInterpolationKeys<S>]: InterpolationValue };
 
@@ -181,7 +181,7 @@ type ResolveMessageType<T, K extends string> = K extends `${infer Head}.${infer 
   : string
   : string;
 
-export type InterpolationParamsForPath<
+type InterpolationParamsForPath<
   TMessages extends Messages,
   K extends MessagePath<TMessages>,
 > = K extends string

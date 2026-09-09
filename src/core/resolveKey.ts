@@ -55,15 +55,6 @@ function resolveNestedFallback(messages: unknown, key: string): string | undefin
   return undefined;
 }
 
-export function resolveKeyWithFallback<TMessages extends Messages>(
-  messages: Partial<TMessages>,
-  fallback: Partial<TMessages>,
-  key: string,
-  nestedFallback = false,
-): string | undefined {
-  return resolveKey(messages, key, nestedFallback) ?? resolveKey(fallback, key, nestedFallback);
-}
-
 export function createResolveKeyCache() {
   let messagesRef: unknown;
   let fallbackRef: unknown;
@@ -93,14 +84,4 @@ export function createResolveKeyCache() {
     cache.set(cacheKey, result);
     return result;
   };
-}
-
-export function applyContext(
-  messages: Record<string, unknown>,
-  key: string,
-  context?: string,
-): string | undefined {
-  if (!context) return undefined;
-  const contextualKey = `${key}_${context}`;
-  return resolveKey(messages as Messages, contextualKey);
 }
