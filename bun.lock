@@ -8,7 +8,7 @@
         "@babel/parser": "^8.0.4",
       },
       "devDependencies": {
-        "@elurjs/core": "^4.0.0",
+        "@elurjs/core": "^4.0.1",
         "jsdom": "^29.1.1",
         "terser": "^5.46.0",
         "typescript": "~7.0.2",
@@ -51,7 +51,7 @@
 
     "@csstools/css-tokenizer": ["@csstools/css-tokenizer@4.0.0", "", {}, "sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA=="],
 
-    "@elurjs/core": ["@elurjs/core@4.0.0", "", {}, "sha512-ma6Jkod2DruzjFt5E2ZGknk4ELLQC1L3WfbnJ3pSUS7/9mlF3LFr8l6aEBy20v69qU5XyeuFAedPx/wBCjMK+A=="],
+    "@elurjs/core": ["@elurjs/core@4.0.1", "", {}, "sha512-YHDNFnfKebAIs9DnrsNkv0ttvkLcLS8OD98uK4Yxt1T/EyKdgUaq72EXVva1jskDZzFnCP65nx7D6W6DiegZsA=="],
 
     "@exodus/bytes": ["@exodus/bytes@1.15.1", "", { "peerDependencies": { "@noble/hashes": "^1.8.0 || ^2.0.0" }, "optionalPeers": ["@noble/hashes"] }, "sha512-S6mL0yNB/Abt9Ei4tq8gDhcczc4S3+vQ4ra7vxnAf+YHC02srtqxKKZghx2Dq6p0e66THKwR6r8N6P95wEty7Q=="],
 
