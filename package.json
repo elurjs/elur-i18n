@@ -1,6 +1,6 @@
 {
   "name": "@elurjs/i18n",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Internationalization library for Elur built on signals and stores",
   "license": "MIT",
   "author": "Deiver Vasquez",
@@ -76,10 +76,10 @@
     "generate": "bun run src/cli/generate.ts"
   },
   "peerDependencies": {
-    "@elurjs/core": "^3.0.0"
+    "@elurjs/core": "^3.0.0 || ^3.7.0-beta.0 || ^4.0.0"
   },
   "devDependencies": {
-    "@elurjs/core": "^3.6.2",
+    "@elurjs/core": "^4.0.0",
     "jsdom": "^29.1.1",
     "terser": "^5.46.0",
     "typescript": "~7.0.2",
